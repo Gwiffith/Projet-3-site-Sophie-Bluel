@@ -1,13 +1,14 @@
 const apiUrl ='http://localhost:5678/api'
 
-async function getData() {
+async function getDataWorks() {
     const url = apiUrl + '/works';
     const response = await fetch(url);
     const projects = await response.json();
-    buildProjects(projects);
+    return projects
 }
 
 function buildProjects(projects) {
+    console.log(projects)
     const gallery = document.getElementById('gallery');
     gallery.innerHtml = '';
     projects.forEach((project) => {
@@ -23,4 +24,15 @@ function buildProjects(projects) {
     });
 }
 
-getData ()
+ document.addEventListener("DOMContentLoaded", async (event) => {
+    const projectList = await getDataWorks()
+    buildProjects(projectList)
+  });
+
+  async function getDataCategories() {
+    const url = apiUrl + '/categories';
+    const response = await fetch(url);
+    const categories = await response.json();
+    return categories;
+}
+  getDataCategories()
