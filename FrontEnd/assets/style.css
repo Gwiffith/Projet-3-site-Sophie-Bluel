@@ -137,6 +137,29 @@ li:hover {
 	width: 100%;
 
 }
+
+#filterMenu{
+	display: flex;
+	justify-content: center;
+	gap: 10px;
+	margin: 50px;
+}
+
+.filtersButton {
+	font-family: 'Syne';
+	color: #1D6154;
+	background-color: white;
+	border-radius: 60px;
+	border : solid 1px #1D6154;
+	padding: 8px;
+	min-width: 100px;
+}
+
+.filtersButton.active {
+	background-color: #1D6154;
+	color: white;
+}
+
 #contact {
 	width: 50%;
 margin: auto;
