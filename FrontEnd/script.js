@@ -23,11 +23,6 @@ function buildProjects(projects) {
     });
 }
 
-  document.addEventListener("DOMContentLoaded", async (event) => {
-    const projectList = await getDataWorks();
-    buildProjects(projectList);
-    await buildFilterMenu();
-});
 
 async function getDataCategories() {
     const urlCategories = apiUrl + '/categories';
@@ -46,11 +41,7 @@ function createButton(category) {
     return button;
 }
 
-async function buildFilterMenu() {
-    const gallery = document.getElementById('gallery');
-    const filterMenu = document.createElement('div');
-    filterMenu.id = 'filterMenu';
-    gallery.insertAdjacentElement('beforebegin', filterMenu);
+function createAllButton() {
     const allButton = document.createElement('button');
     allButton.classList.add("filtersButton")
     allButton.textContent = 'Tous';
@@ -58,8 +49,22 @@ async function buildFilterMenu() {
         const allProjects = await getDataWorks();
         buildProjects(allProjects);
     });
+    return allButton
+}
+
+function createFilterMenuDom() {
+    const gallery = document.getElementById('gallery');
+    const filterMenu = document.createElement('div');
+    filterMenu.id = 'filterMenu';
+    gallery.insertAdjacentElement('beforebegin', filterMenu);
+    return filterMenu;
+}
+
+async function buildFilters(categories) {
+    const filterMenu = createFilterMenuDom();
+    const allButton = createAllButton();
     filterMenu.appendChild(allButton);
-    const categories = await getDataCategories();
+
     categories.forEach((category) => {
         const button = createButton(category);
         filterMenu.appendChild(button);
@@ -79,3 +84,10 @@ async function filterProjectsByCategory(categoryId) {
     const filteredProjects = projects.filter(project => project.categoryId === categoryId); 
     buildProjects(filteredProjects); 
 }
+
+document.addEventListener("DOMContentLoaded", async (event) => {
+    const projectList = await getDataWorks();
+    buildProjects(projectList);
+    const categories = await getDataCategories();
+    await buildFilters(categories);
+});
