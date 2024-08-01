@@ -85,7 +85,26 @@ async function filterProjectsByCategory(categoryId) {
     buildProjects(filteredProjects); 
 }
 
+function isAuthenticated() {
+    return localStorage.getItem('userToken') !== null;
+}
+
+function updateAuthenticationLink() {
+    const authLink = document.getElementById('authLink');
+    if (isAuthenticated()) {
+        authLink.innerHTML = '<a href="#." onclick="logout(); return false;">logout</a>';
+    } else {
+        authLink.innerHTML = '<a href="login.html">login</a>'
+    }
+}
+
+function logout() {
+    localStorage.removeItem('userToken');
+    updateAuthenticationLink();
+}
+
 document.addEventListener("DOMContentLoaded", async (event) => {
+    updateAuthenticationLink();
     const projectList = await getDataWorks();
     buildProjects(projectList);
     const categories = await getDataCategories();
