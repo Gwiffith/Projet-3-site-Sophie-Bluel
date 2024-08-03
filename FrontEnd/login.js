@@ -7,6 +7,11 @@ function getUserData(event) {
     return {email, password};
 }
 
+function displayErrorMessage(message) {
+    const errorMessage = document.getElementById('errorMessage');
+    errorMessage.textContent = message;
+}
+
 async function logIn(event) {
     const userData = getUserData(event);
     const loginData = {
@@ -31,11 +36,11 @@ async function logIn(event) {
             redirectUser()
         } else {
             console.error ('Erreur dans l’identifiant ou le mot de passe', response.status, response.statusText)
-            alert('Erreur dans l’identifiant ou le mot de passe')
+            displayErrorMessage('Erreur dans l’identifiant ou le mot de passe');
         }
-        
     } catch (error) {
         console.error('Erreur de la requête fetch :', error)
+        displayErrorMessage('Erreur de connexion. Veuillez réésayer.')
     };
 }
 

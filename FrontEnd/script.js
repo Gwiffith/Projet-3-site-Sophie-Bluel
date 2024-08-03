@@ -64,7 +64,10 @@ async function buildFilters(categories) {
     const filterMenu = createFilterMenuDom();
     const allButton = createAllButton();
     filterMenu.appendChild(allButton);
-
+    if (isAuthenticated()) {
+        if(filterMenu) filterMenu.style.display = 'none';
+        return;
+    }
     categories.forEach((category) => {
         const button = createButton(category);
         filterMenu.appendChild(button);
@@ -100,13 +103,56 @@ function updateAuthenticationLink() {
 
 function logout() {
     localStorage.removeItem('userToken');
-    updateAuthenticationLink();
+    updateUIAuth();
 }
 
-document.addEventListener("DOMContentLoaded", async (event) => {
-    updateAuthenticationLink();
-    const projectList = await getDataWorks();
-    buildProjects(projectList);
+function updateHeader() {
+    const header = document.querySelector('header');
+    let editBand = document.getElementById('editBand');
+    if (isAuthenticated()) {
+        if (!editBand) { 
+            editBand = document.createElement('div');
+            editBand.id = 'editBand';
+            editBand.innerHTML = '<i class="fa-regular fa-pen-to-square"></i><p>Mode édition</p>';
+            header.insertAdjacentElement("beforebegin", editBand);
+        }
+    } else {
+        if (editBand) {
+            editBand.parentNode.removeChild(editBand);
+        }
+    }
+}
+
+function addEditButton() {
+    const projectsTitle = document.getElementById('projectsTitle');
+    let editButton = document.getElementById('editButton');
+    if (isAuthenticated()) {
+        if (!editButton) { 
+            editButton = document.createElement('button');
+            editButton.innerHTML = '<i class="fa-regular fa-pen-to-square"></i><span>Modifier</span>';
+            editButton.id = 'editButton';
+            projectsTitle.insertAdjacentElement('beforeend', editButton);
+        }
+    } else {
+        if (editButton) { 
+            editButton.parentNode.removeChild(editButton);
+        }
+    }
+}
+
+ async function updateUIAuth() {
+     updateAuthenticationLink();
+    updateHeader();
+     addEditButton()
     const categories = await getDataCategories();
     await buildFilters(categories);
+}
+
+
+
+document.addEventListener("DOMContentLoaded", async (event) => {
+    await updateUIAuth()
+    const projectList = await getDataWorks();
+    buildProjects(projectList);
+    console.log(projectList)
 });

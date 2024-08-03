@@ -58,6 +58,16 @@ header {
 	justify-content: space-between;
 	margin: 50px 0
 }
+#editBand {
+	display: flex;
+	background-color: black;
+	height: 59px;
+	color: white;
+	align-items: center;
+	justify-content: center;
+	gap: 10px;
+}
+
 section {
 	margin: 50px 0
 }
@@ -126,6 +136,12 @@ nav a {
 	padding-top: 20px;
 }
 
+#errorMessage {
+	display: block;
+	font: bold;
+	color: red;
+}
+
 #login input {
 	border: none;
 	width: 379px;
@@ -142,6 +158,19 @@ nav a {
 	background-color: #1D6154;
 	color: white;
 	align-self: center;
+}
+
+#projectsTitle {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	gap: 20px;
+}
+
+#editButton {
+	background-color: white;
+	border: none;
+	font-family: 'work sans';
 }
 
 #login a {
