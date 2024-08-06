@@ -168,9 +168,14 @@ nav a {
 }
 
 #editButton {
+	display: flex;
 	background-color: white;
+	gap :10px;
 	border: none;
 	font-family: 'work sans';
+	margin-bottom: 2em;
+	height: 18px;
+	width: 84px;
 }
 
 #login a {

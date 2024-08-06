@@ -94,45 +94,57 @@ function isAuthenticated() {
 
 function updateAuthenticationLink() {
     const authLink = document.getElementById('authLink');
+    authLink.innerHTML = '';
+    const link = document.createElement('a');
     if (isAuthenticated()) {
-        authLink.innerHTML = '<a href="#." onclick="logout(); return false;">logout</a>';
+        link.href = '#';
+        link.textContent = 'logout';
+        link.addEventListener('click', function(event) {
+            logout();
+            event.preventDefault();
+        })   
     } else {
-        authLink.innerHTML = '<a href="login.html">login</a>'
+        link.href = 'login.html'
+        link.textContent = 'login'
     }
+    authLink.appendChild(link);
 }
 
-function logout() {
+async function logout() {
     localStorage.removeItem('userToken');
     updateUIAuth();
+    const categories = await getDataCategories();
+    await buildFilters(categories);
+
 }
 
 function updateHeader() {
     const header = document.querySelector('header');
     let editBand = document.getElementById('editBand');
     if (isAuthenticated()) {
-        if (!editBand) { 
-            editBand = document.createElement('div');
-            editBand.id = 'editBand';
-            editBand.innerHTML = '<i class="fa-regular fa-pen-to-square"></i><p>Mode édition</p>';
-            header.insertAdjacentElement("beforebegin", editBand);
-        }
+        editBand = document.createElement('div');
+        editBand.id = 'editBand';
+        const editIcon = document.createElement('i');
+        editIcon.className = 'fa-regular fa-pen-to-square';
+        const editText = document.createElement ('p');
+        editText.textContent = 'Mode édition';
+        editBand.appendChild(editIcon);
+        editBand.appendChild(editText);
+        header.insertAdjacentElement("beforebegin", editBand);        
     } else {
         if (editBand) {
             editBand.parentNode.removeChild(editBand);
         }
-    }
-}
+}}
 
 function addEditButton() {
     const projectsTitle = document.getElementById('projectsTitle');
     let editButton = document.getElementById('editButton');
     if (isAuthenticated()) {
-        if (!editButton) { 
             editButton = document.createElement('button');
             editButton.innerHTML = '<i class="fa-regular fa-pen-to-square"></i><span>Modifier</span>';
             editButton.id = 'editButton';
             projectsTitle.insertAdjacentElement('beforeend', editButton);
-        }
     } else {
         if (editButton) { 
             editButton.parentNode.removeChild(editButton);
@@ -141,11 +153,10 @@ function addEditButton() {
 }
 
  async function updateUIAuth() {
-     updateAuthenticationLink();
+    updateAuthenticationLink();
     updateHeader();
-     addEditButton()
-    const categories = await getDataCategories();
-    await buildFilters(categories);
+    addEditButton()
+    
 }
 
 
@@ -154,5 +165,7 @@ document.addEventListener("DOMContentLoaded", async (event) => {
     await updateUIAuth()
     const projectList = await getDataWorks();
     buildProjects(projectList);
-    console.log(projectList)
+    console.log(projectList);
+    const categories = await getDataCategories();
+    await buildFilters(categories);
 });
