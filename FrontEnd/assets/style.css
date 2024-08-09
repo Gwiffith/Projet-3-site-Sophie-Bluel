@@ -94,6 +94,12 @@ h2{
 	font-size: 30px;
 	color: #1D6154
 }
+
+h3{
+	font-weight: 400;
+	font-size: large;
+}
+
 nav ul {
 	display: flex;
 	align-items: center;
@@ -245,6 +251,81 @@ nav a {
 	background-color: #1D6154;
 	color: white;
 }
+
+/* modale */
+.modal {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	background: rgba(0, 0, 0, 0.3);
+}
+
+.modal-content {
+	display: flex;
+	align-items: center;
+	flex-direction: column;
+	background-color:#FFFFFF;
+	width: 630px;
+	height: 688px;
+	padding: 20px;
+	border-radius: 10px;
+}
+
+.modal-nav{
+	display: flex;
+	width: 100%;
+	justify-content: space-between;
+}
+
+.nav-button-style {
+	border: none;
+	background-color: #FFFFFF;
+}
+
+.hidden {
+    visibility: hidden;
+}
+
+.modal-title{
+	padding: 20px;
+}
+
+.modal-main {
+	width: 70%;
+	display: grid;
+	grid-template-columns: repeat(5, 1fr);
+	grid-column-gap: 5px;
+	grid-row-gap: 20px;
+	padding-top: 20px;
+	padding-bottom: 250px;
+	border-bottom: solid 1px #B3B3B3;
+}
+
+.modal-main img {
+	max-width: 100%;
+}
+.modal-submit {
+	margin-top: auto;
+	margin-bottom: 20px;
+}
+
+.buttonAdd {
+	font-family: 'Syne';
+	color: white;
+	background-color: #1D6154;
+	border-radius: 60px;
+	border : solid 1px #1D6154;
+	height: 36px;
+	width: 237px;
+}
+
+/* fin modale */
+
 
 #contact {
 	width: 50%;

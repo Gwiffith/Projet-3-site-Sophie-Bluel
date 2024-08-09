@@ -1,9 +1,11 @@
 const apiUrl ='http://localhost:5678/api'
+let imageGallery = [];
 
 async function getDataWorks() {
     const urlWorks = apiUrl + '/works';
     const response = await fetch(urlWorks);
     const projects = await response.json();
+    imageGallery = projects;
     return projects
 }
 
