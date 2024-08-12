@@ -302,8 +302,6 @@ nav a {
 	grid-column-gap: 5px;
 	grid-row-gap: 20px;
 	padding-top: 20px;
-	padding-bottom: 250px;
-	border-bottom: solid 1px #B3B3B3;
 }
 
 .modal-main img {
