@@ -11,8 +11,11 @@ function openModal(event) {
     closeButton.style.display = 'flex';
 }
 
-function closeModal(event) {
-    event.preventDefault();
+function closeModal(event = null) {
+    if (event) {
+        event.preventDefault();
+    }
+    resetModalContent();
     const modal = document.getElementById('myModal');
     modal.style.display = 'none';
     modal.setAttribute('aria-hidden', 'true');
@@ -54,10 +57,11 @@ function addBackButton() {
 function resetModalContent() {
     const modalTitle = document.getElementById('myModal').querySelector('.modal-title');
     const modalMain = document.getElementById('myModal').querySelector('.modal-main');
-    const modalSubmit = document.getElementById('myModal').querySelector('.modal-submit');
-
-    modalTitle.textContent = 'Galerie photo';
+    const modalSubmit = document.getElementById('myModal').querySelector('.modal-footer');
+    modalTitle.innerHTML = '';
+    addTitle();
     modalMain.innerHTML = '';
+    modalMain.classList.remove('modal-main-updated');
     addGallery(imageGallery);  
     modalSubmit.innerHTML = '';
     addModalButton();
@@ -84,8 +88,10 @@ function addGallery(images) {
     modalMain.innerHTML = '';
     images.forEach(image => {
         const imgContainer = document.createElement('div'); // Conteneur pour l'image et le bouton
+        imgContainer.classList.add('editableGallery')
         const imgElement = document.createElement('img');
         const deleteButton = document.createElement('button');
+        deleteButton.id = 'deleteButton';
         const deleteIcon = document.createElement('i');
         deleteIcon.className = "fa-solid fa-trash-can";
         deleteButton.addEventListener('click', () => deleteImage(image.id, imgContainer));
@@ -109,6 +115,14 @@ async function deleteImage(imageId, imgContainer) {
     .then(response => {
         if (response.ok) {
             imgContainer.remove();
+            // Trouver l'index de l'image dans le tableau imageGallery
+            const index = imageGallery.findIndex(project => project.id === imageId);
+            
+            // Si l'image est trouvée, la supprimer du tableau
+            if (index !== -1) {
+                imageGallery.splice(index, 1);
+            }
+            buildProjects(imageGallery);
         }
     })
     .catch(error => {
@@ -117,12 +131,12 @@ async function deleteImage(imageId, imgContainer) {
 }
 
 function addModalButton() {
-    const modalSubmit = document.getElementById('myModal').querySelector('.modal-submit');
+    const modalSubmit = document.getElementById('myModal').querySelector('.modal-footer');
     let modalButtonAdd = modalSubmit.querySelector('button');
     if (!modalButtonAdd) {  // Vérifier si le bouton existe avant de le créer
         modalButtonAdd = document.createElement('button');
         modalButtonAdd.textContent = 'Ajouter une photo';
-        modalButtonAdd.classList.add('buttonAdd')
+        modalButtonAdd.classList.add('buttonModal')
         modalButtonAdd.id = 'buttonAdd';
         modalSubmit.appendChild(modalButtonAdd);
         modalButtonAdd.addEventListener('click', function() {
@@ -134,29 +148,50 @@ function addModalButton() {
 async function createUploadForm() {
     const uploadForm = document.createElement('form');
     uploadForm.setAttribute('enctype', 'multipart/form-data');
+    uploadForm.classList.add('modalUploadForm');
 
-    const fileInput=document.createElement('input');
+    // Groupe pour l'input de fichier
+    const fileInputGroup = document.createElement('div');
+    const fileInput = document.createElement('input');
     fileInput.type = 'file';
     fileInput.name = 'image';
-    fileInput.accept = 'image/*'; // Accepter uniquement les fichiers image
-
-    const uploadButton = document.createElement('button');
-    uploadButton.type = 'submit';
-    uploadButton.textContent = 'Envoyer';
-
+    fileInput.accept = 'image/*';
+    fileInput.required = true;
+    fileInputGroup.appendChild(fileInput);
+    
+    // Groupe pour le titre
+    const titleGroup = document.createElement('div');
     const titleLabel = document.createElement('label');
+    titleGroup.classList.add('inputGroups');
     titleLabel.setAttribute('for', 'imageTitle');
     titleLabel.textContent = 'Titre';
-
     const titleInput = document.createElement('input');
     titleInput.type = 'text';
     titleInput.name = 'title';
     titleInput.id = 'imageTitle';
+    titleInput.classList.add('inputFields');
     titleInput.required = true;
-
+    titleGroup.appendChild(titleLabel);
+    titleGroup.appendChild(titleInput);
+    
+    // Groupe pour la catégorie
+    const categoryGroup = document.createElement('div');
+    const categoryLabel = document.createElement('label');
+    categoryGroup.classList.add('inputGroups');
+    categoryLabel.setAttribute('for', 'categories');
+    categoryLabel.textContent = 'Catégorie';
     const categorySelect = document.createElement('select');
     categorySelect.name = 'category';
+    categorySelect.id = 'categories';
+    categorySelect.classList.add('inputFields');
     categorySelect.required = true;
+
+// Ajout d'une option vide par défaut
+const defaultOption = document.createElement('option');
+defaultOption.value = '';
+defaultOption.textContent = '';
+categorySelect.appendChild(defaultOption);
+
     try {
         const categories = await getDataCategories();
         categories.forEach(category => {
@@ -164,22 +199,46 @@ async function createUploadForm() {
             option.value = category.id;
             option.textContent = category.name;
             categorySelect.appendChild(option);
-        })
+        });
     } catch (error) {
         console.error('Failed to load categories:', error);
     }
+    categoryGroup.appendChild(categoryLabel);
+    categoryGroup.appendChild(categorySelect);
 
-    uploadForm.appendChild(fileInput);
-    uploadForm.appendChild(titleInput);
-    uploadForm.appendChild(categorySelect);
-    uploadForm.appendChild(uploadButton);
+    // Groupe pour le bouton d'envoi
+    const buttonGroup = document.createElement('div');
+    const uploadButton = document.createElement('button');
+    uploadButton.type = 'submit';
+    uploadButton.textContent = 'Valider';
+    uploadButton.classList.add('buttonModal');
+    uploadButton.disabled = true; // Le bouton est désactivé par défaut
+    buttonGroup.appendChild(uploadButton);
+
+    function validateForm() {
+        const isValid = fileInput.files.length > 0 && titleInput.value.trim() !== '' && categorySelect.value !== '';
+        uploadButton.disabled = !isValid; // Activer/désactiver le bouton en fonction de la validation
+    }
+
+    // Ajout d'événements pour valider le formulaire en temps réel
+    fileInput.addEventListener('change', validateForm);
+    titleInput.addEventListener('input', validateForm);
+    categorySelect.addEventListener('change', validateForm);
+
+    // Ajout de tous les groupes au formulaire
+    uploadForm.appendChild(fileInputGroup);
+    uploadForm.appendChild(titleGroup);
+    uploadForm.appendChild(categoryGroup);
+    uploadForm.appendChild(buttonGroup);
 
     uploadForm.addEventListener('submit', function(event) {
         event.preventDefault();
-        uploadImage(uploadForm)
-    })
+        uploadImage(uploadForm);
+    });
+
     return uploadForm;
 }
+
 
 async function uploadImage(form) {
     const formData = new FormData(form);
@@ -197,7 +256,9 @@ async function uploadImage(form) {
         if (response.ok) {
             const result = await response.json();
             console.log('Upload Success:', result);
-            alert('Image uploadée avec succès!');
+            imageGallery.push(result);
+            buildProjects(imageGallery);
+            closeModal();
         } else {
             throw new Error('Failed to upload image');
         }
@@ -213,7 +274,7 @@ async function updateModalContent() {
     const modalNav = modalContent.querySelector('modal-nav');
     const modalTitle = modalContent.querySelector('.modal-title');
     const modalMain = modalContent.querySelector('.modal-main');
-    const modalSubmit = modalContent.querySelector('.modal-submit');
+    const modalSubmit = modalContent.querySelector('.modal-footer');
 
     const backButton = document.getElementById('backButton');
     backButton.classList.remove('hidden');
@@ -221,6 +282,7 @@ async function updateModalContent() {
     modalTitle.textContent = 'Ajout Photo'
 
     modalMain.innerHTML = '';
+    modalMain.classList.add('modal-main-updated');
     const uploadForm = await createUploadForm();
     modalMain.appendChild(uploadForm);
 

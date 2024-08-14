@@ -95,11 +95,6 @@ h2{
 	color: #1D6154
 }
 
-h3{
-	font-weight: 400;
-	font-size: large;
-}
-
 nav ul {
 	display: flex;
 	align-items: center;
@@ -293,26 +288,62 @@ nav a {
 
 .modal-title{
 	padding: 20px;
+	font-size: x-large;
+	font-weight: 400;
+	
 }
+
 
 .modal-main {
 	width: 70%;
 	display: grid;
 	grid-template-columns: repeat(5, 1fr);
-	grid-column-gap: 5px;
-	grid-row-gap: 20px;
+	grid-column-gap: 10px;
+	grid-row-gap: 25px;
 	padding-top: 20px;
+}
+
+.modal-main-updated{
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	height: 100%;
+}
+
+.modalUploadForm {
+	height: 100%;
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+	align-items: center;
+}
+
+.inputGroups {
+	display: flex;
+	flex-direction: column;
+	margin-bottom: 20px;
+	width: 100%;
+	row-gap: 10px;
+}
+
+.inputFields {
+	height: 51px;
+	border : none;
+	background-color: #FFFFFF;
+	box-shadow: 0px 4px 14px 0px rgba(0, 0, 0, 0.09);
+
 }
 
 .modal-main img {
 	max-width: 100%;
 }
-.modal-submit {
+.modal-footer {
 	margin-top: auto;
 	margin-bottom: 20px;
 }
 
-.buttonAdd {
+.buttonModal {
+	position: relative;
 	font-family: 'Syne';
 	color: white;
 	background-color: #1D6154;
@@ -320,6 +351,44 @@ nav a {
 	border : solid 1px #1D6154;
 	height: 36px;
 	width: 237px;
+	align-self: center;
+}
+
+.buttonModal:disabled {
+    background-color:#A7A7A7; 
+    color: #FFFFFF; 
+    border: solid 1px #A7A7A7; 
+}
+
+.buttonModal::before {
+    content: '';
+    position: absolute;
+    top: -30px; 
+	left: 50%; /* Place le centre du trait au milieu du bouton */
+    transform: translateX(-50%); /* Décale le trait pour qu'il soit centré */
+    width: 420px; 
+    height: 1px; 
+    background-color: #B3B3B3; 
+}
+
+.editableGallery {
+	position: relative;
+}
+
+#deleteButton i {
+	font-size: smaller;
+}
+
+#deleteButton {
+	display: flex;
+	background-color: black;
+	color: #FFFFFF;
+	border : none;
+	border-radius: 2px;
+	padding : 3px 4px;
+	position: absolute;
+	top : 8px;
+	right : 5px;
 }
 
 /* fin modale */
