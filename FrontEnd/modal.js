@@ -150,15 +150,57 @@ async function createUploadForm() {
     uploadForm.setAttribute('enctype', 'multipart/form-data');
     uploadForm.classList.add('modalUploadForm');
 
-    // Groupe pour l'input de fichier
-    const fileInputGroup = document.createElement('div');
+    // Créer le wrapper principal
+    const fileInputWrapper = document.createElement('div');
+    fileInputWrapper.className = 'custom-file-upload-wrapper';
+
+    // Ajouter l'image 
+    const placeholderImage = document.createElement('img');
+    placeholderImage.src = './assets/images/img-placeholder.svg';
+    placeholderImage.alt = 'Emplacement de votre photo'
+    placeholderImage.className = 'placeholder-image';
+
+    // Créer le label qui agit comme un bouton
+    const fileLabel = document.createElement('label');
+    fileLabel.setAttribute('for', 'fileInput');
+    fileLabel.className = 'custom-file-upload';
+    fileLabel.textContent = '+ Ajouter photo';
+
+    // Créer l'input de fichier caché
     const fileInput = document.createElement('input');
     fileInput.type = 'file';
     fileInput.name = 'image';
     fileInput.accept = 'image/*';
+    fileInput.id = 'fileInput';
+    fileInput.style.display = 'none'; // Masquer l'input
     fileInput.required = true;
-    fileInputGroup.appendChild(fileInput);
+
+    // Créer le texte d'information
+    const fileInfo = document.createElement('span');
+    fileInfo.className = 'file-info';
+    fileInfo.textContent = 'jpg, png : 4mo max';
+
+    // Assembler les éléments
+    fileInputWrapper.appendChild(placeholderImage); // Ajouter l'image en haut
+    fileInputWrapper.appendChild(fileLabel); // Ajouter le label (bouton)
+    fileInputWrapper.appendChild(fileInput); // Ajouter l'input de fichier
+    fileInputWrapper.appendChild(fileInfo);  // Ajouter le texte d'information
     
+    // Ajouter la prévisualisation d'image
+    fileInput.addEventListener('change', function() {
+        if (this.files && this.files[0]) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                placeholderImage.src = e.target.result; // Met à jour l'image avec l'aperçu
+                fileLabel.classList.add('removed');
+                fileInfo.classList.add('removed');
+                placeholderImage.classList.add('preview-image');
+                fileInputWrapper.style.padding = '0';
+            }
+            reader.readAsDataURL(this.files[0]);
+        }
+    })
+
     // Groupe pour le titre
     const titleGroup = document.createElement('div');
     const titleLabel = document.createElement('label');
@@ -226,7 +268,8 @@ categorySelect.appendChild(defaultOption);
     categorySelect.addEventListener('change', validateForm);
 
     // Ajout de tous les groupes au formulaire
-    uploadForm.appendChild(fileInputGroup);
+    
+    uploadForm.appendChild(fileInputWrapper);
     uploadForm.appendChild(titleGroup);
     uploadForm.appendChild(categoryGroup);
     uploadForm.appendChild(buttonGroup);
@@ -289,6 +332,17 @@ async function updateModalContent() {
     modalSubmit.innerHTML ='';
 }
 
+document.addEventListener('DOMContentLoaded', function() {
+    const modal = document.getElementById('myModal');
+
+    // Écoute pour les clics sur l'arrière-plan de la modale
+    modal.addEventListener('click', function(event) {
+        // Vérifie si le clic est directement sur le fond (modal) et pas sur modal-content
+        if (event.target === modal) {
+            closeModal();
+        }
+    })
+})
 
 document.addEventListener('DOMContentLoaded', function() {
     const editButton = document.getElementById('editButton');
@@ -296,5 +350,5 @@ document.addEventListener('DOMContentLoaded', function() {
         openModal(event);
         addGallery(imageGallery);
         addModalButton();
-    });
-});
+    })
+})
