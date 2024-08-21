@@ -195,7 +195,7 @@ async function createUploadForm() {
                 fileLabel.classList.add('removed');
                 fileInfo.classList.add('removed');
                 placeholderImage.classList.add('preview-image');
-                fileInputWrapper.style.padding = '0';
+                fileInputWrapper.classList.add('wrapper-no-padding')
             }
             reader.readAsDataURL(this.files[0]);
         }
@@ -332,19 +332,18 @@ async function updateModalContent() {
     modalSubmit.innerHTML ='';
 }
 
+
 document.addEventListener('DOMContentLoaded', function() {
-    const modal = document.getElementById('myModal');
+    const modalBackground = document.getElementById('myModal');
 
     // Écoute pour les clics sur l'arrière-plan de la modale
-    modal.addEventListener('click', function(event) {
+    modalBackground.addEventListener('click', function(event) {
         // Vérifie si le clic est directement sur le fond (modal) et pas sur modal-content
-        if (event.target === modal) {
+        if (event.target === modalBackground) {
             closeModal();
         }
     })
-})
 
-document.addEventListener('DOMContentLoaded', function() {
     const editButton = document.getElementById('editButton');
     editButton.addEventListener('click', function(event) {
         openModal(event);
